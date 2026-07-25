@@ -39,6 +39,7 @@ sudo yunohost app install /path/to/panoramax-review_ynh -a "domain=your.domain.t
 - **`manifest.toml` source URL + sha256 are placeholder** — `sha256` is empty (skips check). Must be filled before release.
 - **npm commands run as `$app` user** via `ynh_exec_as_app` (not root). The `$app` user needs a home dir for npm cache. Note: helpers v2.1 dropped the generic `ynh_exec_as $user` in favor of `ynh_exec_as_app` (which uses `$app` automatically), so the manifest must declare `helpers_version = "2.1"` — `2.0` resolves to a non-existent `helpers.v2.0.d/` dir and breaks the nodejs resource provisioning.
 - **chown after build**: `chown -R $app:$app "$install_dir"` runs after npm build so the app user owns all files.
+- **Don't use `npm --omit=optional`**: the app's build toolchain (rolldown/vite) ships its native bindings as npm *optional* dependencies keyed by platform/arch (e.g. `@rolldown/binding-linux-x64-gnu`). Skipping optional deps makes `npm run build` fail with "Cannot find native binding". `npm ci` and `npm prune` only pass `--omit=dev`, never `--omit=optional`.
 - **Env file**: only sets `NODE_ENV=production`, `PORT=__PORT__`, `DATA_DIR=__DATA_DIR__`. Add new vars here and re-run `ynh_config_add`.
 - **YunoHost SSO**: `auth_header = true` — the app reads `X-Remote-User` header set by nginx (via `proxy_params_with_auth`). No LDAP.
 
