@@ -14,9 +14,18 @@ YunoHost v2 package for [panoramax-review](https://github.com/Thib-ai/panoramax-
 | `doc/` | YunoHost install docs |
 | `review.md` | Historical code review (issues mostly fixed; keep for reference) |
 
+## Environment
+
+**You are most likely NOT running on a YunoHost machine.** Don't assume YunoHost helpers, the `yunohost` CLI, or `/usr/share/yunohost/` are available locally — they only exist on the target install host. The package scripts (`scripts/*`) are executed by YunoHost on the install host, not in this dev repo.
+
+When you need to look up YunoHost behaviour (helper signatures, manifest schema, resource provisioning), use the local copies of the source and docs:
+
+- `/home/thibaultmol/git/yunohost documentation/yunohost source code/` — YunoHost core source (helpers in `helpers/helpers.v2.1.d/`, resource logic in `src/utils/resources.py`)
+- `/home/thibaultmol/git/yunohost documentation/official yunohost docs/` — Docusaurus docs (manifest schema in `docs/dev/50.packaging/10.manifest.mdx`)
+
 ## Key commands
 
-The package uses YunoHost helpers (`v2.0`). All scripts source `/usr/share/yunohost/helpers`.
+The package uses YunoHost helpers (`v2.1`). All scripts source `/usr/share/yunohost/helpers`.
 
 ```bash
 # Install locally (for testing)
@@ -28,7 +37,7 @@ sudo yunohost app install /path/to/panoramax-review_ynh -a "domain=your.domain.t
 - **proxy_pass must have trailing slash** (`http://127.0.0.1:__PORT__/`) so nginx strips the sub-path before forwarding. Without it, sub-path installs (e.g. `/review/api/...`) break with 404.
 - **VITE_BASE_PATH must be set at build time** for sub-path installs to work. Both `scripts/install` and `scripts/upgrade` pass `VITE_BASE_PATH="$path/"` before `npm run build`.
 - **`manifest.toml` source URL + sha256 are placeholder** — `sha256` is empty (skips check). Must be filled before release.
-- **npm commands run as `$app` user** via `ynh_exec_as $app` (not root). The `$app` user needs a home dir for npm cache.
+- **npm commands run as `$app` user** via `ynh_exec_as_app` (not root). The `$app` user needs a home dir for npm cache. Note: helpers v2.1 dropped the generic `ynh_exec_as $user` in favor of `ynh_exec_as_app` (which uses `$app` automatically), so the manifest must declare `helpers_version = "2.1"` — `2.0` resolves to a non-existent `helpers.v2.0.d/` dir and breaks the nodejs resource provisioning.
 - **chown after build**: `chown -R $app:$app "$install_dir"` runs after npm build so the app user owns all files.
 - **Env file**: only sets `NODE_ENV=production`, `PORT=__PORT__`, `DATA_DIR=__DATA_DIR__`. Add new vars here and re-run `ynh_config_add`.
 - **YunoHost SSO**: `auth_header = true` — the app reads `X-Remote-User` header set by nginx (via `proxy_params_with_auth`). No LDAP.
