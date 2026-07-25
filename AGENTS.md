@@ -35,6 +35,7 @@ sudo yunohost app install /path/to/panoramax-review_ynh -a "domain=your.domain.t
 ## Critical gotchas
 
 - **proxy_pass must have trailing slash** (`http://127.0.0.1:__PORT__/`) so nginx strips the sub-path before forwarding. Without it, sub-path installs (e.g. `/review/api/...`) break with 404.
+- **Don't duplicate what `proxy_params_with_auth` already sets**: that include already defines `Host`, `X-Real-IP`, `X-Forwarded-*`, `proxy_http_version 1.1`, `Upgrade`, and `Connection`. Re-declaring `proxy_http_version` in particular is a fatal nginx error (`"proxy_http_version" directive is duplicate`).
 - **VITE_BASE_PATH must be set at build time** for sub-path installs to work. Both `scripts/install` and `scripts/upgrade` pass `VITE_BASE_PATH="$path/"` before `npm run build`.
 - **`manifest.toml` source URL + sha256 are placeholder** — `sha256` is empty (skips check). Must be filled before release.
 - **npm commands run as `$app` user** via `ynh_exec_as_app` (not root). The `$app` user needs a home dir for npm cache. Note: helpers v2.1 dropped the generic `ynh_exec_as $user` in favor of `ynh_exec_as_app` (which uses `$app` automatically), so the manifest must declare `helpers_version = "2.1"` — `2.0` resolves to a non-existent `helpers.v2.0.d/` dir and breaks the nodejs resource provisioning.
