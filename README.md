@@ -5,7 +5,7 @@ Review street-level imagery from Panoramax. Import pictures, flag errors, track 
 ## Installation
 
 ```bash
-sudo yunohost app install https://github.com/username/panoramax-review_ynh
+sudo yunohost app install https://github.com/thibaultmol/panoramax-review_ynh
 ```
 
 ## Documentation
