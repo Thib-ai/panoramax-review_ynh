@@ -1,0 +1,70 @@
+#!/bin/bash
+
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source /usr/share/yunohost/helpers
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression "Setting up source files..."
+
+ynh_setup_source --dest_dir="$install_dir"
+
+#=================================================
+# INSTALL DEPENDENCIES AND BUILD
+#=================================================
+ynh_script_progression "Installing npm dependencies..."
+
+(cd "$install_dir" && ynh_exec_as $app npm ci --omit=optional --no-audit --no-fund)
+
+ynh_script_progression "Building the application..."
+
+(cd "$install_dir" && VITE_BASE_PATH="$path/" npm run build)
+
+ynh_script_progression "Removing development dependencies..."
+
+(cd "$install_dir" && ynh_exec_as $app npm prune --omit=dev --omit=optional --no-audit --no-fund)
+
+ynh_script_progression "Setting file ownership..."
+
+chown -R $app:$app "$install_dir"
+
+#=================================================
+# ADD A CONFIGURATION FILE
+#=================================================
+ynh_script_progression "Adding $app's configuration..."
+
+ynh_config_add --template="panoramax-review.env" --destination="$install_dir/.env"
+
+#=================================================
+# SYSTEM CONFIGURATION
+#=================================================
+ynh_script_progression "Adding system configurations related to $app..."
+
+ynh_config_add_nginx
+
+ynh_config_add_systemd
+
+yunohost service add $app --description="Review Panoramax street-level imagery" --log="/var/log/$app/$app.log"
+
+mkdir -p "/var/log/$app"
+touch "/var/log/$app/$app.log"
+chown -R $app:$app "/var/log/$app"
+
+ynh_config_add_logrotate
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting $app's systemd service..."
+
+ynh_systemctl --service=$app --action="start"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression "Installation of $app completed"
