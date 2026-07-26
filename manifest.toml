@@ -45,8 +45,8 @@ ram.runtime = "100M"
 [resources]
 
     [resources.sources.main]
-    url = "https://github.com/Thib-ai/panoramax-review/archive/839d8f4fe99a8b0828a2017f7a099acf3edc4a66.tar.gz"
-    sha256 = "c5313b20990bff7cca70ac98f5d8122d7706bc5a7c79ba834d0545edb8af3e84"
+    url = "https://github.com/Thib-ai/panoramax-review/archive/refs/tags/v1.2.4.tar.gz"
+    sha256 = "b3aed83042c60b52fe5706a282dff6288ac50909d836d9db654fc8ffa235985d"
     in_subdir = true
     autoupdate.strategy = "latest_github_tag"
 
