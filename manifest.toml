@@ -8,7 +8,7 @@ description.en = "Review street-level imagery from Panoramax: flag errors, track
 description.fr = "Examinez les images de rue de Panoramax : signalez les erreurs, suivez les problèmes et gérez la qualité des photos"
 description.nl = "Beoordeel straatbeelden van Panoramax: markeer fouten, volg problemen en beheer beeldkwaliteit"
 
-version = "1.2.4~ynh1"
+version = "1.2.5~ynh1"
 
 maintainers = []
 
@@ -45,8 +45,8 @@ ram.runtime = "100M"
 [resources]
 
     [resources.sources.main]
-    url = "https://github.com/Thib-ai/panoramax-review/archive/refs/tags/v1.2.4.tar.gz"
-    sha256 = "b3aed83042c60b52fe5706a282dff6288ac50909d836d9db654fc8ffa235985d"
+    url = "https://github.com/Thib-ai/panoramax-review/archive/refs/tags/v1.2.5.tar.gz"
+    sha256 = "94ae863be0b936ba870eda3cbc8c2ae9e35a9e8efe4893d58290f5f15a79190c"
     in_subdir = true
     autoupdate.strategy = "latest_github_tag"
 
